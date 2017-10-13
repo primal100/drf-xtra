@@ -1,18 +1,20 @@
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, mixins
-from rest_framework.pagination import CursorPagination
-from rest_framework.authtoken.models import Token
+from django.contrib.sites.models import Site
 from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import viewsets, mixins
+from rest_framework.authtoken.models import Token
+from rest_framework.pagination import CursorPagination
+from rest_framework.permissions import IsAdminUser
+from .mixins import XtraViewSetMixin
+from .permissions import UserPermissions, WriteObjectPermission, IsSuperuser
 from .serializers import (
     UserSerializer, UserUpdateSerializer, StaffUserSerializer, StaffUserUpdateSerializer, RegularUserSerializer,
     GroupSerializer, LogSerializer, SiteSerializer, TokenSerializer, PermissionsSerializer
 )
-from .permissions import UserPermissions, WriteObjectPermission, IsSuperuser
-from rest_framework.permissions import IsAdminUser
-from django.contrib.sites.models import Site
-from .mixins import XtraViewSetMixin
+
+
 
 UserModel = get_user_model()
 

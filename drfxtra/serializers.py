@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
-from .utils import user_verify_email_with_check_existing
 from rest_framework import serializers
 from django.contrib.auth import password_validation
 from django.utils.translation import ugettext_lazy as _
@@ -53,18 +52,19 @@ class XtraModelSerializer(serializers.ModelSerializer):
     fieldsets = {}
 
     def choose_fields_by_fieldset(self, fields, fieldset_name):
-        fieldset = self.fieldsets.get(fieldset_name)
-        if not fieldset:
-            if fieldset_name == "list":
+        fieldnames = self.fieldsets.get(fieldset_name)
+        if fieldnames:
+            fieldset = [f for f in fields if f.field in fieldnames]
+        elif fieldset_name == "list":
                 fieldset = [f for f in fields if not f.many]
-            elif fieldset_name == "writable":
-                fieldset = [f for f in fields if not f.read_only]
-            elif fieldset_name == "no_related":
-                fieldset = [f for f in fields if not f.related]
-            elif fieldset_name == "writable_no_related":
-                fieldset = [f for f in fields if not f.related and not f.read_only]
-            else:
-                fieldset = fields
+        elif fieldset_name == "writable":
+            fieldset = [f for f in fields if not f.read_only]
+        elif fieldset_name == "no_related":
+            fieldset = [f for f in fields if not f.related]
+        elif fieldset_name == "writable_no_related":
+            fieldset = [f for f in fields if not f.related and not f.read_only]
+        else:
+            fieldset = fields
         return fieldset
 
     def get_fields(self):
